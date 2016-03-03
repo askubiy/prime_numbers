@@ -1,0 +1,54 @@
+<html>
+<head>
+  <script src="jquery-1.12.1.min.js"></script>
+  <script src="app.js"></script>
+  <script src="all.js"></script>
+  <title> Prime Numbers</title>
+  <style type="text/css">
+    canvas { border: 1px solid black; }
+    body {padding: 15px; }
+    button { border-radius: 10px; }
+    .status-on { color: green; }
+    .status-off { color: red; }
+    .app-run-stats { width: 60%; padding: 15px; border: 1px dashed grey; background: rgba(0, 0, 0, 0.1);}
+    .content { padding: 15px; }
+    .control { margin: 20px 20px; }
+    #start-btn { width: 150px; height: 40px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h3>Prime Numbers</h3>
+  </header>
+  <!-- <canvas id="tutorial" width="160" height="160">Canvas is unsupported</canvas> -->
+  <div class="content">
+    <div>
+      <table class="app-run-stats">
+        <tr>
+          <td>State: <span id="app-status" class="status-off">not running</span></td>
+          <td>Application ran: <span id="run-counter">0</span> times</td>
+        </tr>
+        <tr>
+          <td>Numbers enumerated: <span>10000</span></td>
+          <td>Total operating time: <span id="total-operating-time"></span></td>
+        </tr>
+        <tr>
+          <td>Primes found: <span>888</span></td>
+          <td>Max: <span id="max-operating-time"></span> / Min: <span id="min-operating-time"></span></td>
+        </tr>
+      </table>
+    </div>
+    <div class="control">
+      <button id="start-btn">Start</button>
+    </div>
+    <div class="control" style="width: 60%;">
+      <div style="float: left; width: 50%">
+        <button id="start-btn">Show found numbers</button>
+      </div>
+      <div style="float: right; width: 50%">
+        <button id="start-btn">Show as image</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
