@@ -1,4 +1,26 @@
 function PrimeNumbersApp(){
+  var db = new DB;
+  var dfd = $.Deferred();
+
+  function dbOpen(arg){
+    console.log("db open: " + arg);
+  }
+
+  dfd.done(dbOpen);
+
+  var successCallback = function (){
+    db.addPrimal(1);
+    console.log("db.addPrimal(1)");
+    db.addPrimal(3);
+    console.log("db.addPrimal(3)");
+    db.addPrimal(5);
+    console.log("db.addPrimal(5)");
+    db.getPrimalList();
+    console.log("db.getPrimalList call");
+  };
+
+  db.openDb(dfd)
+
   var state = false;
   var runCounter = parseInt(localStorage.runCounter) || 0;
   var totalOperatingTime = parseInt(localStorage.totalOperatingTime) || 0;
@@ -7,6 +29,7 @@ function PrimeNumbersApp(){
   var minOperatingTime = parseInt(localStorage.minOperatingTime) || 0;
   var operatingTimeInterval = null;
   var currentRunTimeInterval = null;
+  var numbersCount = parseInt(localStorage.numbersCount) || 0;
 
   this.start = function() {
     if (!state) {
@@ -57,12 +80,13 @@ function PrimeNumbersApp(){
   function startOperatingTimeClock(){
     operatingTimeInterval = setInterval(function(){
       totalOperatingTime += 1000;
+      localStorage.totalOperatingTime = totalOperatingTime;
     }, 1000);
 
     currentRunTime = 0;
     currentRunTimeInterval = setInterval(function(){
-      currentRunTime += 1000;
-    }, 1000);
+      currentRunTime += 500;
+    }, 500);
   }
 
   function stopOperatingTimeClock(){
@@ -70,9 +94,14 @@ function PrimeNumbersApp(){
     clearInterval(currentRunTimeInterval);
     if(currentRunTime > maxOperatingTime) {
       maxOperatingTime = currentRunTime;
+      localStorage.maxOperatingTime = maxOperatingTime;
     }
     if(currentRunTime < minOperatingTime || minOperatingTime === 0) {
+      if (currentRunTime < 1000 && currentRunTime > 0){
+        currentRunTime = 1000;
+      }
       minOperatingTime = currentRunTime;
+      localStorage.minOperatingTime = minOperatingTime;
     }
   }
 

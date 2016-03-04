@@ -1,7 +1,8 @@
 $(document).ready(
   function(){
+
     var app = new PrimeNumbersApp();
-    $("#run-counter").text(app.getRanCount);
+    interfacePrepare(app);
 
     var operatingTimeInterval = setInterval(function(){
       var time = app.getTotalOperatingTime();
@@ -24,7 +25,16 @@ $(document).ready(
         $("#app-status").addClass("status-off");
         $("#app-status").text("not running");
       }
+
+      $(this).blur();
     });
 
   }
 );
+
+function interfacePrepare(app) {
+  $("#run-counter").text(app.getRanCount);
+  $("#max-operating-time").text(app.getMaxOperatingTime());
+  $("#min-operating-time").text(app.getMinOperatingTime());
+  $("#total-operating-time").text(app.getTotalOperatingTime());
+}
