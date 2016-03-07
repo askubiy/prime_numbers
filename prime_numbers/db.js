@@ -6,25 +6,20 @@ function DB() {
 
   var db;
 
-  this.openDb = function (defer) {
-    console.log("openDb ...");
-    console.log(defer);
-
+  this.openDb = function (callback) {
     var req = indexedDB.open(DB_NAME, DB_VERSION);
 
     req.onsuccess = function (evt) {
-      defer.resolve(true);
       db = this.result;
-      console.log("openDb DONE");
+      callback(true);
     };
 
     req.onerror = function (evt) {
-      defer.resolve(false);
+      callback(true);
       console.error("openDb:", evt.target.errorCode);
     };
 
     req.onupgradeneeded = function (evt) {
-      console.log("openDb.onupgradeneeded");
       var store = evt.currentTarget.result.createObjectStore(
         DB_STORE_NAME, { autoIncrement: true });
     };
@@ -49,13 +44,11 @@ function DB() {
   }
 
   this.addPrimal = function (primalNumber) {
-    console.log("addPrimal arguments: ", primalNumber);
 
     var store = getObjectStore('readwrite');
     var req = store.add(primalNumber);
 
     req.onsuccess = function (evt) {
-      console.log("Insertion in DB successful");
     };
 
     req.onerror = function() {
@@ -64,17 +57,14 @@ function DB() {
   }
 
 
-  this.getPrimalList = function (store) {
-    console.log("getPrimalList");
-
-    if (typeof store == 'undefined')
-      store = getObjectStore('readonly');
+  this.getPrimalList = function (callback) {
+    store = getObjectStore('readonly');
 
     var req;
     req = store.count();
 
     req.onsuccess = function(evt) {
-      console.log("Objects count: ", evt.target.result);
+      //console.log("Objects count: ", evt.target.result);
     };
     req.onerror = function(evt) {
       console.error("add error", this.error);
@@ -85,16 +75,11 @@ function DB() {
 
     req.onsuccess = function(evt) {
       var cursor = evt.target.result;
-
       if (cursor) {
-        console.log("getPrimalList cursor:", cursor);
         primalList.push(cursor.value);
-
         cursor.continue();
       } else {
-        console.log("No more entries");
-        console.log("====== primalList:");
-        console.log(primalList);
+        callback(primalList);
       }
     };
   }

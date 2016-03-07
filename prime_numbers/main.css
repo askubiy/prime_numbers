@@ -6,5 +6,27 @@ button { border-radius: 10px; }
 .app-run-stats { width: 60%; padding: 15px; border: 1px dashed grey; background: rgba(0, 0, 0, 0.1);}
 .content { padding: 15px; }
 .control { margin: 20px 20px; }
-table.app-run-stats > tbody > tr >td { width: 50%; }
+table#app-run-stats { width: 100%;}
+table#app-run-stats > tbody > tr >td { width: 50%; }
 #start-btn { width: 150px; height: 40px; }
+div.primes-found-container {padding: 20px; width: 25%;}
+
+.paging-nav {
+  text-align: right;
+  padding-top: 2px;
+}
+
+.paging-nav a {
+  margin: auto 1px;
+  text-decoration: none;
+  display: inline-block;
+  padding: 1px 7px;
+  background: #91b9e6;
+  color: white;
+  border-radius: 3px;
+}
+
+.paging-nav .selected-page {
+  background: #187ed5;
+  font-weight: bold;
+}

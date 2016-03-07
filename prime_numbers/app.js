@@ -1,27 +1,10 @@
 function PrimeNumbersApp(){
   var db = new DB;
-  var dfd = $.Deferred();
-
-  function dbOpen(arg){
-    console.log("db open: " + arg);
-  }
-
-  dfd.done(dbOpen);
-
-  var successCallback = function (){
-    db.addPrimal(1);
-    console.log("db.addPrimal(1)");
-    db.addPrimal(3);
-    console.log("db.addPrimal(3)");
-    db.addPrimal(5);
-    console.log("db.addPrimal(5)");
-    db.getPrimalList();
-    console.log("db.getPrimalList call");
-  };
-
-  db.openDb(dfd)
+  var w;
 
   var state = false;
+  var numbersEnumerated = parseInt(localStorage.numbersEnumerated) || 0;
+  var currentNumber;
   var runCounter = parseInt(localStorage.runCounter) || 0;
   var totalOperatingTime = parseInt(localStorage.totalOperatingTime) || 0;
   var currentRunTime = parseInt(localStorage.currentRunTime) || 0;
@@ -29,11 +12,13 @@ function PrimeNumbersApp(){
   var minOperatingTime = parseInt(localStorage.minOperatingTime) || 0;
   var operatingTimeInterval = null;
   var currentRunTimeInterval = null;
-  var numbersCount = parseInt(localStorage.numbersCount) || 0;
+  var primesCount = parseInt(localStorage.primesCount) || 0;
 
   this.start = function() {
     if (!state) {
+      currentNumber = numbersEnumerated;
       state = true;
+      startWorker();
       runCounterUpdate();
       startOperatingTimeClock();
       return true;
@@ -52,8 +37,58 @@ function PrimeNumbersApp(){
     }
   };
 
+  function startWorker() {
+    if (!state) {
+      return;
+    }
+
+    if(typeof(Worker) !== "undefined") {
+      if(typeof(w) == "undefined") {
+        w = new Worker("worker.js");
+        var message = {mes: "start!", number: currentNumber};
+        w.postMessage(message);
+      }
+      w.onmessage = function(event) {
+
+        stopWorker();
+        if (state) {
+          if(event.data.isPrime){
+            storePrimalInDB(currentNumber);
+          }
+          numbersEnumerated++;
+          localStorage.numbersEnumerated = numbersEnumerated;
+          currentNumber++;
+          startWorker();
+        }
+      };
+    } else {
+      console.log("Sorry! No Web Worker support.");
+    }
+  }
+
+  function stopWorker() {
+    w.terminate();
+    w = undefined;
+  }
+
+  function storePrimalInDB(primalNumber){
+    db.openDb(function(){
+      db.addPrimal(primalNumber);
+    });
+    primesCount++;
+    localStorage.primesCount = primesCount;
+  }
+
+  this.getPrimesCount = function(){
+    return primesCount;
+  };
+
   this.getState = function() {
     return state;
+  };
+
+  this.getNumbersEnumerated = function() {
+    return numbersEnumerated;
   };
 
   this.getTotalOperatingTime = function() {
@@ -70,6 +105,12 @@ function PrimeNumbersApp(){
 
   this.getRanCount = function() {
     return runCounter;
+  };
+
+  this.getPrimalList = function(callback) {
+    db.openDb(function(){
+      db.getPrimalList(callback);
+    });
   };
 
   function runCounterUpdate(){
